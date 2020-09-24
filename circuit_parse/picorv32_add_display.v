@@ -114,12 +114,33 @@ reg [31:0] dbg_insn_opcode;
 reg [31:0] dbg_insn_addr; 
  
 wire dbg_mem_valid = mem_valid; 
+always@* begin 
+$fwrite(f,"%0d cycle :dbg_mem_valid = mem_valid; \n"  , count_cycle); 
+end 
 wire dbg_mem_instr = mem_instr; 
+always@* begin 
+$fwrite(f,"%0d cycle :dbg_mem_instr = mem_instr; \n"  , count_cycle); 
+end 
 wire dbg_mem_ready = mem_ready; 
+always@* begin 
+$fwrite(f,"%0d cycle :dbg_mem_ready = mem_ready ; \n"  , count_cycle); 
+end 
 wire [31:0] dbg_mem_addr  = mem_addr; 
+always@* begin 
+$fwrite(f,"%0d cycle :dbg_mem_addr  = mem_addr ; \n"  , count_cycle); 
+end 
 wire [31:0] dbg_mem_wdata = mem_wdata; 
+always@* begin 
+$fwrite(f,"%0d cycle :dbg_mem_wdata = mem_wdata ; \n"  , count_cycle); 
+end 
 wire [ 3:0] dbg_mem_wstrb = mem_wstrb; 
+always@* begin 
+$fwrite(f,"%0d cycle :dbg_mem_wstrb = mem_wstrb ; \n"  , count_cycle); 
+end 
 wire [31:0] dbg_mem_rdata = mem_rdata; 
+always@* begin 
+$fwrite(f,"%0d cycle :dbg_mem_rdata = mem_rdata; ; \n"  , count_cycle); 
+end 
  
 assign pcpi_rs1 = reg_op1; 
 always@* begin 
@@ -200,7 +221,7 @@ $fwrite(f,"%0d cycle :if (REGS_INIT_ZERO) begin\n"  , count_cycle);
 if (REGS_INIT_ZERO) begin 
 for (i = 0; i < regfile_size; i = i+1) begin 
 cpuregs[i] = 0; 
-$fwrite(f,"%0d cycle :cpuregs[i] = 0;\n"  , count_cycle); 
+$fwrite(f,"%0d cycle :cpuregs[%d] = 0;\n"  , count_cycle,i); 
 end 
 end 
 end 
@@ -265,8 +286,14 @@ reg mem_do_wdata;
 wire mem_xfer; 
 reg mem_la_secondword, mem_la_firstword_reg, last_mem_valid; 
 wire mem_la_firstword = COMPRESSED_ISA && (mem_do_prefetch || mem_do_rinst) && next_pc[1] && !mem_la_secondword; 
+
+always@* begin 
+$fwrite(f,"%0d cycle :mem_la_firstword = COMPRESSED_ISA && (mem_do_prefetch || mem_do_rinst) && next_pc[1] && !mem_la_secondword; \n"  , count_cycle); 
+end 
 wire mem_la_firstword_xfer = COMPRESSED_ISA && mem_xfer && (!last_mem_valid ? mem_la_firstword : mem_la_firstword_reg); 
- 
+always@* begin 
+$fwrite(f,"%0d cycle :mem_la_firstword_xfer = COMPRESSED_ISA && mem_xfer && (!last_mem_valid ? mem_la_firstword : mem_la_firstword_reg);  \n"  , count_cycle); 
+end  
 reg prefetched_high_word; 
 reg clear_prefetched_high_word; 
 reg [15:0] mem_16bit_buffer; 
@@ -275,14 +302,22 @@ wire [31:0] mem_rdata_latched_noshuffle;
 wire [31:0] mem_rdata_latched; 
  
 wire mem_la_use_prefetched_high_word = COMPRESSED_ISA && mem_la_firstword && prefetched_high_word && !clear_prefetched_high_word; 
+always@* begin 
+$fwrite(f,"%0d cycle :mem_la_use_prefetched_high_word = COMPRESSED_ISA && mem_la_firstword && prefetched_high_word && !clear_prefetched_high_word; \n"  , count_cycle); 
+end 
 assign mem_xfer = (mem_valid && mem_ready) || (mem_la_use_prefetched_high_word && mem_do_rinst); 
 always@* begin 
 $fwrite(f,"%0d cycle :assign mem_xfer = (mem_valid && mem_ready) || (mem_la_use_prefetched_high_word && mem_do_rinst);\n"  , count_cycle); 
 end 
  
 wire mem_busy = |{mem_do_prefetch, mem_do_rinst, mem_do_rdata, mem_do_wdata}; 
+always@* begin 
+$fwrite(f,"%0d cycle :mem_busy = |{mem_do_prefetch, mem_do_rinst, mem_do_rdata, mem_do_wdata};   \n"  , count_cycle); 
+end 
 wire mem_done = resetn && ((mem_xfer && |mem_state && (mem_do_rinst || mem_do_rdata || mem_do_wdata)) || (&mem_state && mem_do_rinst)) &&(!mem_la_firstword || (~&mem_rdata_latched[1:0] && mem_xfer)); 
- 
+ always@* begin 
+$fwrite(f,"%0d cycle :mem_done = resetn && ((mem_xfer && |mem_state && (mem_do_rinst || mem_do_rdata || mem_do_wdata)) || (&mem_state && mem_do_rinst)) &&(!mem_la_firstword || (~&mem_rdata_latched[1:0] && mem_xfer));   \n"  , count_cycle); 
+end 
 assign mem_la_write = resetn && !mem_state && mem_do_wdata; 
 always@* begin 
 $fwrite(f,"%0d cycle :assign mem_la_write = resetn && !mem_state && mem_do_wdata;\n"  , count_cycle); 
@@ -1966,7 +2001,7 @@ always @(posedge clk) begin
 $fwrite(f,"%0d cycle :if (resetn && cpuregs_write && latched_rd) begin\n"  , count_cycle); 
 if (resetn && cpuregs_write && latched_rd) begin 
 cpuregs[latched_rd] <= cpuregs_wrdata; 
-$fwrite(f,"%0d cycle :cpuregs[latched_rd] <= cpuregs_wrdata;\n"  , count_cycle); 
+$fwrite(f,"%0d cycle :cpuregs[%d] <= cpuregs_wrdata;\n"  , count_cycle,latched_rd); 
 end 
 end 
  
