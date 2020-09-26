@@ -37,15 +37,15 @@ def rw_parse ():
             if current_time == int(sim_time):
                 cycle_rw.append(rw_info)
             else:
-                rw_list.append(current_time)
-                rw_list.append(cycle_rw)
-                rw_table[(int(current_time/10000))][1].append(rw_list)
+                # rw_list.append(current_time)
+                # rw_list.append(cycle_rw)
+                rw_table[(int(current_time/10000))][1] = rw_table[(int(current_time/10000))][1] + cycle_rw
                 current_time = int(sim_time)
                 cycle_rw = []
                 rw_list = []
         rw_list.append(current_time)
         rw_list.append(cycle_rw)
-        rw_table[(int(current_time/10000))][1].append(rw_list)
+        rw_table[(int(current_time/10000))][1] = rw_table[(int(current_time/10000))][1] + cycle_rw
         current_time = int(sim_time)
         cycle_rw = []
         rw_list = []
@@ -58,15 +58,15 @@ def rw_parse ():
             if current_time == int(sim_time):
                 cycle_rw.append(rw_info)
             else:
-                rw_list.append(current_time)
-                rw_list.append(cycle_rw)
-                rw_table[(int(current_time/10000))][1].append(rw_list)
+                # rw_list.append(current_time)
+                # rw_list.append(cycle_rw)
+                rw_table[(int(current_time/10000))][1] = rw_table[(int(current_time/10000))][1] + cycle_rw
                 current_time = int(sim_time)
                 cycle_rw = []
                 rw_list = []
         rw_list.append(current_time)
         rw_list.append(cycle_rw)
-        rw_table[(int(current_time/10000))][1].append(rw_list)
+        rw_table[(int(current_time/10000))][1] = rw_table[(int(current_time/10000))][1] + cycle_rw
         current_time = int(sim_time)
         cycle_rw = []
         rw_list = []
