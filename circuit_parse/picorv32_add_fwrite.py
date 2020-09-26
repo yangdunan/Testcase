@@ -1,5 +1,5 @@
 import re
-
+import pandas as pd
 
 def rw_parse ():
     print("========================rw_parse start===================================")
@@ -8,7 +8,8 @@ def rw_parse ():
         cycle_rw = []
         rw_list = []
         current_time = 0
-        for line in reader1:
+        lines = reader1.readlines()
+        for line  in lines[:-1] :
             line = line.strip()
             sim_time = line.split("cycle ")[0].strip()
             rw_info = line.split("cycle ")[1].strip()[1:]
@@ -21,10 +22,56 @@ def rw_parse ():
                 current_time = int(sim_time)
                 cycle_rw = []
                 rw_list = []
-    print(rw_table)
-
-
-
+        rw_list.append(current_time)
+        rw_list.append(cycle_rw)
+        rw_table.append(rw_list)
+        current_time = int(sim_time)
+        cycle_rw = []
+        rw_list = []
+        current_time = 0
+        lines = reader2.readlines()
+        for line  in lines[:-1] :
+            line = line.strip()
+            sim_time = line.split("cycle ")[0].strip()
+            rw_info = line.split("cycle ")[1].strip()[1:]
+            if current_time == int(sim_time):
+                cycle_rw.append(rw_info)
+            else:
+                rw_list.append(current_time)
+                rw_list.append(cycle_rw)
+                rw_table[(int(current_time/10000))][1].append(rw_list)
+                current_time = int(sim_time)
+                cycle_rw = []
+                rw_list = []
+        rw_list.append(current_time)
+        rw_list.append(cycle_rw)
+        rw_table[(int(current_time/10000))][1].append(rw_list)
+        current_time = int(sim_time)
+        cycle_rw = []
+        rw_list = []
+        current_time = 0
+        lines = reader3.readlines()
+        for line  in lines[:-1] :
+            line = line.strip()
+            sim_time = line.split("cycle ")[0].strip()
+            rw_info = line.split("cycle ")[1].strip()[1:]
+            if current_time == int(sim_time):
+                cycle_rw.append(rw_info)
+            else:
+                rw_list.append(current_time)
+                rw_list.append(cycle_rw)
+                rw_table[(int(current_time/10000))][1].append(rw_list)
+                current_time = int(sim_time)
+                cycle_rw = []
+                rw_list = []
+        rw_list.append(current_time)
+        rw_list.append(cycle_rw)
+        rw_table[(int(current_time/10000))][1].append(rw_list)
+        current_time = int(sim_time)
+        cycle_rw = []
+        rw_list = []
+    df_rw_table = pd.DataFrame(rw_table,columns=['sim_time', 'assign'])
+    df_rw_table.to_csv("assign_log.csv",index=False)
     print("========================rw_parse start===================================")
 
 
