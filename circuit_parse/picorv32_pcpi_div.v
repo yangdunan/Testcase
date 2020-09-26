@@ -12,6 +12,10 @@ module picorv32_pcpi_div (
 	output reg        pcpi_wait,
 	output reg        pcpi_ready
 );
+	integer f ;
+	initial begin
+		f = $fopen("cpu_rw_2.txt", "w");
+	end
 	reg instr_div, instr_divu, instr_rem, instr_remu;
 	wire instr_any_div_rem = |{instr_div, instr_divu, instr_rem, instr_remu};
 

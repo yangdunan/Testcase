@@ -16,6 +16,10 @@ module picorv32_pcpi_fast_mul #(
 	output            pcpi_wait,
 	output            pcpi_ready
 );
+	integer f;
+	initial begin
+		f = $fopen("cpu_rw_3.txt", "w");
+	end
 	reg instr_mul, instr_mulh, instr_mulhsu, instr_mulhu;
 	wire instr_any_mul = |{instr_mul, instr_mulh, instr_mulhsu, instr_mulhu};
 	wire instr_any_mulh = |{instr_mulh, instr_mulhsu, instr_mulhu};

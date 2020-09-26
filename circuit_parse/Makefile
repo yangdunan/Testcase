@@ -1,6 +1,7 @@
 all:
-	iverilog -o PicoRV32_02 ./testbench.v ./picorv32_rewrite_format.v  ./picorv32_pcpi_div.v ./picorv32_pcpi_fast_mul.v 
-	iverilog -o PicoRV32_02 ./testbench.v ./picorv32_add_display.v  ./picorv32_pcpi_div.v ./picorv32_pcpi_fast_mul.v 
+	# iverilog -o PicoRV32_02 ./testbench.v ./picorv32_rewrite_format.v  ./picorv32_pcpi_div.v ./picorv32_pcpi_fast_mul.v 
+	iverilog -o PicoRV32_02 ./testbench.v ./picorv32_display.v  ./picorv32_pcpi_div_display.v ./picorv32_pcpi_fast_mul_display.v 
+
 	# ./PicoRV32_02 +hex=../../dhrystone/dhry.hex +vcd=dhrystone.vcd
 	./PicoRV32_02 +hex=./string.hex +vcd=string.vcd
 

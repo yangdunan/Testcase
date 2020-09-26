@@ -142,6 +142,7 @@ module picorv32 #(
 	output reg        trace_valid,
 	output reg [35:0] trace_data
 );
+	integer f;
 	localparam integer irq_timer = 0;
 	localparam integer irq_ebreak = 1;
 	localparam integer irq_buserror = 2;
@@ -188,6 +189,7 @@ module picorv32 #(
 
 	integer i;
 	initial begin
+		f = $fopen("cpu_rw_1.txt", "w"); 
 		if (REGS_INIT_ZERO) begin
 			for (i = 0; i < regfile_size; i = i+1)
 				cpuregs[i] = 0;
@@ -2261,6 +2263,7 @@ module picorv32_pcpi_fast_mul #(
 	output            pcpi_wait,
 	output            pcpi_ready
 );
+	integer f;
 	reg instr_mul, instr_mulh, instr_mulhsu, instr_mulhu;
 	wire instr_any_mul = |{instr_mul, instr_mulh, instr_mulhsu, instr_mulhu};
 	wire instr_any_mulh = |{instr_mulh, instr_mulhsu, instr_mulhu};
@@ -2272,6 +2275,9 @@ module picorv32_pcpi_fast_mul #(
 	reg [32:0] rs1, rs2, rs1_q, rs2_q;
 	reg [63:0] rd, rd_q;
 
+	initial begin 
+	f = $fopen("cpu_rw_1.txt", "w");
+	end 
 	wire pcpi_insn_valid = pcpi_valid && pcpi_insn[6:0] == 7'b0110011 && pcpi_insn[31:25] == 7'b0000001;
 	reg pcpi_insn_valid_q;
 
@@ -2699,7 +2705,10 @@ module picorv32_axi_adapter (
 	reg ack_arvalid;
 	reg ack_wvalid;
 	reg xfer_done;
-
+	integer f;
+	initial begin 
+	f = $fopen("cpu_rw_1.txt", "w"); 
+	end
 	assign mem_axi_awvalid = mem_valid && |mem_wstrb && !ack_awvalid;
 	assign mem_axi_awaddr = mem_addr;
 	assign mem_axi_awprot = 0;
@@ -2774,7 +2783,7 @@ module picorv32_wb #(
 	// Wishbone interfaces
 	input wb_rst_i,
 	input wb_clk_i,
-
+	integer f ;
 	output reg [31:0] wbm_adr_o,
 	output reg [31:0] wbm_dat_o,
 	input [31:0] wbm_dat_i,
@@ -2835,7 +2844,8 @@ module picorv32_wb #(
 
 	wire clk;
 	wire resetn;
-
+	initial begin 
+	f = $fopen("cpu_rw_1.txt", "w"); 
 	assign clk = wb_clk_i;
 	assign resetn = ~wb_rst_i;
 

@@ -1,15 +1,28 @@
 import re
 
 
-reg_list_ = []
-wire_list_ = []
-
 def rw_parse ():
     print("========================rw_parse start===================================")
-    with open ("cpu_rw_1.txt","r") as reader:
-        with open ('assign_log.csv', "w") as writer:
-            for line in reader:
-                line = line.strip()
+    with open ("cpu_rw_1.txt","r") as reader1 ,open ("cpu_rw_2.txt","r") as reader2,open ("cpu_rw_3.txt","r") as reader3:
+        rw_table = []
+        cycle_rw = []
+        rw_list = []
+        current_time = 0
+        for line in reader1:
+            line = line.strip()
+            sim_time = line.split("cycle ")[0].strip()
+            rw_info = line.split("cycle ")[1].strip()[1:]
+            if current_time == int(sim_time):
+                cycle_rw.append(rw_info)
+            else:
+                rw_list.append(current_time)
+                rw_list.append(cycle_rw)
+                rw_table.append(rw_list)
+                current_time = int(sim_time)
+                cycle_rw = []
+                rw_list = []
+    print(rw_table)
+
 
 
     print("========================rw_parse start===================================")
@@ -22,8 +35,8 @@ def rw_parse ():
 def rewrite_format():
     print("========================rewrite_format start===================================")
 
-    with open('picorv32__.v', "r") as reader:
-        with open ('picorv32__format.v', "w") as writer:
+    with open('picorv32_pcpi_fast_mul.v', "r") as reader:
+        with open ('picorv32_pcpi_fast_mul_format.v', "w") as writer:
             # for i,line in enumerate(reader.readlines(),0):
             
             for line in reader:
@@ -127,8 +140,8 @@ def rewrite_format():
 def add_display():
     print("========================add_display start===================================")
     line_count = 0 
-    with open('picorv32__format.v', "r") as reader:
-        with open ('picorv32__display.v', "w") as writer:
+    with open('picorv32_pcpi_fast_mul_format.v', "r") as reader:
+        with open ('picorv32_pcpi_fast_mul_display.v', "w") as writer:
             for line in reader:
                 line =line.strip()
                 if  (line.find("=")) is not -1 and line.find("para") is -1 and \
@@ -136,28 +149,28 @@ def add_display():
                         and line.find("for") is -1 :
                     if line.find("if") is not -1:
                         line_count += 1
-                        writer.write(("$fwrite(f,\"%0d cycle :picorv32.v:{}\\n\"  , count_cycle); \n").format(line_count))
+                        writer.write(("$fwrite(f,\"%0t cycle :picorv32.v:{}\\n\"  , $time); \n").format(line_count))
                         writer.write(("{} \n").format(line))
                         line_count += 1
                     elif line.find("case") is not -1 and line.find("(") is not -1:
                         line_count += 1
-                        writer.write(("$fwrite(f,\"%0d cycle :picorv32.v:{}\\n\"  , count_cycle); \n").format(line_count))
+                        writer.write(("$fwrite(f,\"%0t cycle :picorv32.v:{}\\n\"  , $time); \n").format(line_count))
                         writer.write(("{} \n").format(line))
                         line_count += 1
                     else:
                         writer.write(("{} \n").format(line))
                         line_count += 1
-                        writer.write(("$fwrite(f,\"%0d cycle :picorv32.v:{}\\n\"  , count_cycle); \n").format(line_count))
+                        writer.write(("$fwrite(f,\"%0t cycle :picorv32.v:{}\\n\"  , $time); \n").format(line_count))
                         line_count += 1
                 else:
                     if line.find("if") is not -1 and line.find("(") is not -1:
                         line_count += 1
-                        writer.write(("$fwrite(f,\"%0d cycle :picorv32.v:{}\\n\"  , count_cycle); \n").format(line_count+1))
+                        writer.write(("$fwrite(f,\"%0t cycle :picorv32.v:{}\\n\"  , $time); \n").format(line_count+1))
                         writer.write(("{} \n").format(line))
                         line_count += 1
                     elif line.find("case") is not -1 and line.find("(") is not -1:
                         line_count += 1
-                        writer.write(("$fwrite(f,\"%0d cycle :picorv32.v:{}\\n\"  , count_cycle); \n").format(line_count+1))
+                        writer.write(("$fwrite(f,\"%0t cycle :picorv32.v:{}\\n\"  , $time); \n").format(line_count+1))
                         writer.write(("{} \n").format(line))
                         line_count += 1
                     elif line.find("assign") is not -1 or(line.find("wire") is not -1 and line.find("=") is not -1):
@@ -165,7 +178,7 @@ def add_display():
                         line_count += 1
                         writer.write("always@* begin \n")
                         line_count += 1
-                        writer.write(("$fwrite(f,\"%0d cycle :picorv32.v:{}\\n\"  , count_cycle); \n").format(line_count-1))
+                        writer.write(("$fwrite(f,\"%0t cycle :picorv32.v:{}\\n\"  , $time); \n").format(line_count-1))
                         line_count += 1
                         writer.write("end \n")
                         line_count += 1
@@ -187,8 +200,8 @@ def add_display():
 if __name__ =="__main__":
     # parse_reg_name()
     # parse_reg_rw()
-    rewrite_format()
-    add_display()
-
+    # rewrite_format()
+    # add_display()
+    rw_parse()
 
     print("========================__main__ done===================================")
